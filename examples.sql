@@ -257,4 +257,88 @@ SELECT * FROM products WHERE product_id NOT IN
 
 -- we can use the ALL ANY KEYWORDS WHEN THE subquries return more than one value for comparision
 
+-- NUMERIC FUNCTIONS IN SQL ROUND(VALUE,precision) CEIL(),FLOOR() ABS() etc..
+-- There functions are very much self explanatory if needed we can do a quick search
+SELECT ROUND(15.455,1);
+
+SELECT ROUND(13.2);
+
+SELECT ROUND(15.6);
+
+SELECT FLOOR(15.8);
+
+SELECT CEIL(15.3);
+
+-- String functions are used to deal with the strings
+-- returns the length of the string
+SELECT LENGTH("BHANU");
+SELECT UPPER('god');
+SELECT LOWER('CAT');
+SELECT TRIM("   how are you ?   ");
+-- first argument is the serach string and next is the string
+-- if string not found the return value is 0 if found then it returns the beignning position of the string
+SELECT LOCATE('p',"i like pizza");
+-- To the substring function we can pass the string,position to begin and length of the substring (optional) if not specified returns till the end.
+SELECT SUBSTRING('I am bhanu prathap',6);
+-- this function is used to replace the string first argument is string then string to be replaced and next string that will be replaced
+SELECT REPLACE('k bhanu prathap','k','katikala');
+-- used to combine the multiple strings
+SELECT CONCAT('K',' ','BHANU');
+
+/*
+MySQL comes with the following data types for storing a date or a date/time value in the database:
+
+DATE - format YYYY-MM-DD
+DATETIME - format: YYYY-MM-DD HH:MI:SS
+TIMESTAMP - format: YYYY-MM-DD HH:MI:SS
+YEAR - format YYYY or YY
+*/
+-- These are functions to work with dates in mysql 
+-- we can use the extract which is standard in sql
+SELECT NOW();
+SELECT CURDATE();
+SELECT CURTIME();
+SELECT YEAR(CURDATE());
+SELECT MONTH(CURDATE());
+SELECT DAY(CURDATE());
+SELECT HOUR(CURTIME());
+SELECT MINUTE(CURTIME());
+SELECT MONTHNAME(CURDATE());
+SELECT DAYNAME(CURDATE());
+
+-- IN order to format date and time we have DATE_FORMAT AND TIME FORMAT
+-- we can look into the documentation for further about the format.
+SELECT DATE_FORMAT(NOW(),"%M %Y");
+
+-- in order to perform the calcu;lations on the date and time we have few functions like DATE_ADD(),DATE_SUB(),DATEDIFF() etc..,
+
+-- if null function is used to substitute the null values with the specified values
+-- if a value in a column is null then it returns the specified value.
+-- COALESCE will return the first non negative value if all null then the specified value
+USE sql_store;
+SELECT order_id,
+IFNULL(shipper_id,"Not assigned")
+FROM orders;
+
+-- get the customer name,
+-- so the main use of if and case is that for a column if we want to add the values based on a condition we can use the if for simple cases or use the CASE
+-- WE can use the if function like  this IF(test_expression,value returned when true,value returned when false)
+-- instead of using the multiple union and add the rows we can use the if and return the values based on expression
+SELECT order_id,IF(order_date>"2019-01-01","Active","Archived") FROM orders;
+
+-- if we have multiple conditions to check then we can use the case statement
+-- in the if statement we can specify only one test condition but using the CASE we can specify multiple test cases and value to be returned
+
+-- THE sample example of dividing the customers based on points
+-- using the WHEN WE CAN SPECIFY THE TEST CASES AND VALUE IS RETURNED WHEN IT IS TRUE
+-- IF no match occurs then VALUE FOR ELSE IS RETURNED AND FINALLY WE NEED TO END IT BY END KEYWORD 
+SELECT first_name,points,
+CASE 
+WHEN points BETWEEN 0 AND 1999 THEN "Bronze"
+WHEN points BETWEEN 2000 AND 2999 THEN "Silver"
+WHEN points>3000 THEN "Gold"
+ELSE "No Label"
+END AS "lABEL"
+FROM customers;
+
 
