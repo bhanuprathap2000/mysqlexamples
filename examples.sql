@@ -155,6 +155,106 @@ VALUES ('bhanu','prathap',"1999-07-25","telangana,secunderabad","hyderabad","TS"
  UPDATE customers
  SET points=points+50
  WHERE birth_date<"1990-01-01";
+ 
+ -- In order to delete the data we can use the DELETE 
+ -- error occurs because of same mode
+ -- we need to be careful because if forgot to specify the where clause then entire table can be lost
+ DELETE FROM customers WHERE first_name="bunny";
 
+USE sql_invoicing;
+/*
+An aggregate function allows you to perform a calculation on a set of values to return a single scalar value. We often use aggregate functions with the GROUP BY and HAVING clauses of the SELECT statement.
+
+The following are the most commonly used SQL aggregate functions:
+
+AVG – calculates the average of a set of values.
+COUNT – counts rows in a specified table or view.
+MIN – gets the minimum value in a set of values.
+MAX – gets the maximum value in a set of values.
+SUM – calculates the sum of values.
+Notice that all aggregate functions above ignore NULL values except for the COUNT function.
+
+aggregate_function (DISTINCT | ALL expression)
+
+*/
+SELECT "First half of 2019" AS date_range,
+SUM(invoice_total) AS total_sales,
+SUM(payment_total) AS total_payments,
+SUM(invoice_total-payment_total) AS total
+FROM invoices
+WHERE invoice_date BETWEEN "2019-01-01" AND "2019-06-30"
+
+UNION
+
+SELECT "Second half of 2019" AS date_range,
+SUM(invoice_total) AS total_sales,
+SUM(payment_total) AS total_payments,
+SUM(invoice_total-payment_total) AS total
+FROM invoices
+WHERE invoice_date BETWEEN "2019-06-30" AND "2019-12-31"
+UNION
+SELECT "Total" AS date_range,
+SUM(invoice_total) AS total_sales,
+SUM(payment_total) AS total_payments,
+SUM(invoice_total-payment_total) AS total
+FROM invoices
+WHERE invoice_date BETWEEN "2019-01-01" AND "2019-12-31";
+
+
+-- The order of clauses is select,from,where,having,order by
+-- Here the aggregate function will be applied to grouped records 
+SELECT date,pm.name AS payment_method,SUM(amount) AS total_amount FROM payments p 
+JOIN payment_methods pm ON p.payment_id=pm.payment_method_id GROUP BY date,payment_method ORDER BY total_amount DESC;
+
+
+-- So the where clause is used to filter out the data before grouping and having clause is used to filter out the data after the grouping.
+-- one more difference is that where clause can be used with any column whether selected or not but having clause can work with only selected columns.
+
+USE sql_store;
+-- get the customers who all live in virgina who spent more than $100
+SELECT * FROM customers WHERE state="VA";
+
+-- IN order to summarise the grouped data we can use the ROLL UP operator
+
+/*
+A Subquery or Inner query or a Nested query is a query within another SQL query and embedded within the WHERE clause.
+
+A subquery is used to return data that will be used in the main query as a condition to further restrict the data to be retrieved.
+
+Subqueries can be used with the SELECT,FROM,WHERE, INSERT, UPDATE, and DELETE statements along with the operators like =, <, >, >=, <=, IN, BETWEEN, etc.
+
+There are a few rules that subqueries must follow −
+
+Subqueries must be enclosed within parentheses.
+
+A subquery can have only one column in the SELECT clause, unless multiple columns are in the main query for the subquery to compare its selected columns.
+
+An ORDER BY command cannot be used in a subquery, although the main query can use an ORDER BY. The GROUP BY command can be used to perform the same function as the ORDER BY in a subquery.
+
+Subqueries that return more than one row can only be used with multiple value operators such as the IN operator.
+
+The SELECT list cannot include any references to values that evaluate to a BLOB, ARRAY, CLOB, or NCLOB.
+
+A subquery cannot be immediately enclosed in a set function.
+
+The BETWEEN operator cannot be used with a subquery. However, the BETWEEN operator can be used within the subquery.
+*/
+
+-- Find the products that are more expensive than lettuce (id=3)
+
+SELECT * FROM products WHERE unit_price>(SELECT unit_price 	FROM products WHERE product_id=3);
+
+-- find employees who earn more than average
+USE sql_hr;
+-- another solution could be we can find the avg and then hard code that but we can use the subquery which does that for us.
+SELECT * FROM employees WHERE salary>(SELECT AVG(salary) FROM employees);
+
+-- Find the products which are never ordered
+-- when the subquery returns more than one value we can use IN or NOT IN opertors like below
+USE sql_store;
+SELECT * FROM products WHERE product_id NOT IN 
+(SELECT DISTINCT product_id FROM order_items);
+
+-- we can use the ALL ANY KEYWORDS WHEN THE subquries return more than one value for comparision
 
 
