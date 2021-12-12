@@ -13,6 +13,7 @@ SELECT * from orders WHERE order_date>= "2018-01-01";
 
 -- IN order to combine multiple conditions we can use the AND OR  NOT OPERATORS AND COMES FIRST IN PREFERENCE AND NEXT OR NOT WILL NEGATE THE RESULT SET.WE CAN USE THE () IN ORDER TO GIVE MORE PREFERENCE
 -- From the orders table get the items for order_id=6 and total price is greater than 30 
+-- When we have multiple values to specify and compare then we can use the IN operator
 SELECT * FROM order_items WHERE order_id=6 AND unit_price*quantity>30;
 
 -- WHEN WE HAVE TO WRITE MULTIPLE OR CONDTIONS INSTEAD WE CAN USE THE IN OPERATOR
@@ -119,3 +120,41 @@ SELECT * from customers JOIN orders USING (customer_id);
 -- natural join is where the database engine will figure out the which column to copare in both tables (not recomennded to use) we just need to add the NATURAL keyword infront of join.
 -- In SQL, the CROSS JOIN is used to combine each row of the first table with each row of the second table. It is also known as the Cartesian join since it returns the Cartesian product of the sets of rows from the joined tables.
 SELECT * FROM shippers s CROSS JOIN products p ON s.shipper_id=p.product_id;
+
+/*
+
+using the join we can combine colums from multiple tables 
+using the union we can combine rows from multiple tables
+The UNION operator is used to combine the result-set of two or more SELECT statements.
+Every SELECT statement within UNION must have the same number of columns
+The columns must also have similar data types
+The columns in every SELECT statement must also be in the same order
+*/
+-- Here basically using the union operator we can combine multiple select where the table can be same or different tables but number of columns and order of them matters
+SELECT customer_id,first_name,points,"Bronze" AS type FROM customers WHERE points BETWEEN 0 AND 1999
+UNION SELECT customer_id,first_name,points,"Silver" AS type FROM customers WHERE points BETWEEN 2000 AND 2999
+UNION SELECT customer_id,first_name,points,"Gold" AS type FROM customers WHERE points>3000;
+
+-- In order to insert the values into the table we can use the insert into
+-- while using the insert into we can specify the columsn we want to insert and other columns if they have any default value they take those or if allowed null then null is inserted if required then error.
+-- we can speify the multiple rows by comma sperated values like below
+INSERT INTO customers (first_name,last_name,birth_date,address,city,state)
+VALUES ('bhanu','prathap',"1999-07-25","telangana,secunderabad","hyderabad","TS"),
+ ('bhanu','prathap',"1999-07-25","telangana,secunderabad","hyderabad","TS");
+ 
+ -- in order to update the the row or rows we can use the UPDATE tablename
+ -- after that we can use the set and set the column values and then at last we need to specify the condition for a row or rows row means single match rows means multiple matches
+ UPDATE customers 
+ SET first_name="bunny",last_name="kumar"
+ WHERE customer_id=12;
+ 
+ -- Write a SQL statement to give any customers who were born before 1990 50 extra points.
+ -- this will try to update the multiple rows but mysql will not allow in safe mode either remove the safe mode or run it somewhere else
+ -- 10:02:39	UPDATE customers  SET points=points+50  WHERE birth_date<"1990-01-01"	Error Code: 1175. You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column.  To disable safe mode, toggle the option in Preferences -> SQL Editor and reconnect.	0.125 sec
+
+ UPDATE customers
+ SET points=points+50
+ WHERE birth_date<"1990-01-01";
+
+
+
