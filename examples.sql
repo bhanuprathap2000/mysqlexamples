@@ -340,5 +340,34 @@ WHEN points>3000 THEN "Gold"
 ELSE "No Label"
 END AS "lABEL"
 FROM customers;
+-- Database Administrator and Database Users will face two challenges: writing complex SQL queries and securing database access.
+-- Sometimes SQL queries become more complicated due to the use of multiple joins, subqueries, and GROUP BY in a single query.
+-- To simplify such queries, you can use some proxy over the original table.
+-- Also, Sometimes from the security side, the database administrator wants to restrict direct access to the database.
+-- For example, if a table contains various columns but the user only needs 3 columns of data in such case DBA will create a virtual table of 3 columns. 
+-- For both purposes, you can use the view. Views can act as a proxy or virtual table. Views reduce the complexity of SQL queries and provide secure access to underlying tables.
+-- create view <name of view> as (query)
+-- now we can access the view as the normal table 
+USE sql_invoicing;
+CREATE OR REPLACE VIEW sales_by_client AS 
+SELECT c.client_id,c.name,SUM(invoice_total) AS total_sales FROM clients c JOIN invoices i USING (client_id) GROUP BY client_id,name;
+-- this is a view and we are acessing it normally like other tables it is a virtual table i.e is only query will be stored but not the table and we get data we try to access the data.
+SELECT * FROM sales_by_client;
+
+-- IN order to alter or chnage the view there are two ways which is DROP VIEW <viewname> and then again run the CREATE VIEW 
+-- or instead use the create or replace using this we can run as many times.
+
+-- DISTINCT
+-- Aggregate
+-- Group by and having by
+-- Union
+
+-- if the view doesn't contain these keywords then that view is updatable that means we can update the data in table with the help of this table.
+-- Sometimes when we update the view this may remove the rows in that case we can include WITH OPTION CHECK to prevent this.
+
+-- Benefits of views are they simplify the queries and subquries
+-- they reduce the impact of the changes i.e if we chnage the table then queriess which are based on that table needs to be updated but if we use the view and then 
+-- only plcae to update the code is view and our queries canbe same with view as abstarction
+-- provide the data security for table.allow only certain columsn to be updated (be careful or else it will be mess.) 
 
 
