@@ -313,7 +313,7 @@ SELECT DATE_FORMAT(NOW(),"%M %Y");
 -- in order to perform the calcu;lations on the date and time we have few functions like DATE_ADD(),DATE_SUB(),DATEDIFF() etc..,
 
 -- if null function is used to substitute the null values with the specified values
--- if a value in a column is null then it returns the specified value.
+-- if a value in a column is null then it returns the specified value else the same value which is not null.
 -- COALESCE will return the first non negative value if all null then the specified value
 USE sql_store;
 SELECT order_id,
@@ -369,5 +369,71 @@ SELECT * FROM sales_by_client;
 -- they reduce the impact of the changes i.e if we chnage the table then queriess which are based on that table needs to be updated but if we use the view and then 
 -- only plcae to update the code is view and our queries canbe same with view as abstarction
 -- provide the data security for table.allow only certain columsn to be updated (be careful or else it will be mess.) 
+
+/*
+A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+
+So if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+
+You can also pass parameters to a stored procedure, so that the stored procedure can act based on the parameter value(s) that is passed.
+*/
+-- WE CAN USE THE STORED PROCEDURES TO GET,CREATE,UPDATE AND DELETE DATA
+USE sql_invoicing;
+
+-- first we need to change the delimiter so that mysql sees the below code as one unit we follow $$ connvention whereever this $$ appears then that is the end
+-- then we need to create procedure <name of stored procedure>()
+-- begin
+-- write the sql statements
+-- end$$
+-- delimietr ; change back the delimiter to ;
+DELIMITER $$
+CREATE PROCEDURE get_clients()
+
+BEGIN
+
+SELECT * FROM clients;
+
+END$$
+
+DELIMITER ;
+
+-- in order to use the stored procedure then we need cal it we can call nameofprocedure()  but mostly write these so that they can be used in our applications rather than in mysql or sql
+
+call get_clients();
+
+-- instead of memorizing the syntax for stored procedures we can use the stored procedures setting in the databses;create store procedures which takes care of everything we just need to write the sql quries inside them that's it.
+
+-- we can drop a stored procedure if we want
+-- sometimes if stored if deleted and we are trying to delete them again the we need to use the if exists to keep the error silent
+DROP PROCEDURE IF EXISTS get_clients;
+
+-- we can add the parameters in the stored procedure with their data type.
+-- and pass these paarmeters while calling. if we don't pass the parameter the error will occur.
+DELIMITER $$
+
+CREATE PROCEDURE get_clients_by_state(state CHAR(2))
+BEGIN
+SELECT * FROM clients c WHERE c.state=state;
+END$$
+
+DELIMITER ;
+
+-- IN ORDER TO EXECUTE WE CALL AND PASS THE parameters
+call sql_invoicing.get_clients_by_state('NY');
+
+
+-- DEFAULT VALUES
+DROP PROCEDURE IF EXISTS get_clients_by_state;
+DELIMITER $$
+
+CREATE PROCEDURE get_clients_by_state(state CHAR(2))
+BEGIN
+-- if null then c.state=c.state true for all columns that means all the columns 
+SELECT * FROM clients c WHERE c.state=IFNULL(state,c.state);
+END$$
+
+DELIMITER ;
+-- INCASE OF NULL THE DEFAULT VALUES CANN BE GIVEN BUT WE NEED TO PASS ATLEAST NULL TO INDICATE THE DEFAULT VALUES
+call sql_invoicing.get_clients_by_state(NULL);
 
 
