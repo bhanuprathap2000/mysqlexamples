@@ -547,7 +547,7 @@ interval:
 
 -- The events are very useful for cleaning the stale data which can be run on schedule basis.
 
-SHOW EVENTS
+SHOW EVENTS;
 -- IN order to drop an event DROP EVENT NAME 
 -- IN ORDER TO CHNAGE AN EVENT USE ALTER
 
@@ -650,3 +650,22 @@ we need to use the specific for each use case very carefully.
 
 -- mysql now supports the json data type we can store the key value pairs in the db itself like we do in mongodb or firebase and we can query the data based on the key value pairs also.alter
 -- please read the tutorial for more information https://www.digitalocean.com/community/tutorials/working-with-json-in-mysql
+
+/*
+Normalization is a database design technique that reduces data redundancy and eliminates undesirable characteristics like Insertion, Update and Deletion Anomalies. 
+Normalization rules divides larger tables into smaller tables and links them using relationships. 
+The purpose of Normalisation in SQL is to eliminate redundant (repetitive) data and ensure data is stored logically.
+*/
+
+-- first norm each cell should have a single value and we cannot have the repeated columns
+-- second norm every table should describe one entity and every column inside that should describe that entity
+-- a column in a table should not be derived from other columns.
+
+-- see if there is any duplication in the data try to seperate the data and keep in different tables 
+-- no need to memorize the norms but if we find the duplication just try to avoid that and seperate the data based on requirements.
+-- In mysql first we can create modals which look like tables and they have the relationships and later we can forward engineer so that database will be created.
+
+-- basically in forward engineering we take a database model and convert it to database containing the actual tables and relationships.
+-- in reverse engineering we take the database and tables and will create a dtabase model for that if it doesn't exist.this way we cany visulaize our database and 
+-- see the relationships among the tables.
+
