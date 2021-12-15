@@ -551,3 +551,102 @@ SHOW EVENTS
 -- IN order to drop an event DROP EVENT NAME 
 -- IN ORDER TO CHNAGE AN EVENT USE ALTER
 
+-- A group of sql statements that represent a single unit of work.
+-- Transactions has ACID properties
+
+/*
+A transaction is a unit of work that is performed against a database. Transactions are units or sequences of work accomplished in a logical order, whether in a manual fashion by a user or automatically by some sort of a database program.
+
+A transaction is the propagation of one or more changes to the database. For example, if you are creating a record or updating a record or deleting a record from the table, then you are performing a transaction on that table. It is important to control these transactions to ensure the data integrity and to handle database errors.
+
+Practically, you will club many SQL queries into a group and you will execute all of them together as a part of a transaction.
+
+Properties of Transactions
+Transactions have the following four standard properties, usually referred to by the acronym ACID.
+
+Atomicity − ensures that all operations within the work unit are completed successfully. Otherwise, the transaction is aborted at the point of failure and all the previous operations are rolled back to their former state.
+
+Consistency − ensures that the database properly changes states upon a successfully committed transaction.
+
+Isolation − enables transactions to operate independently of and transparent to each other.
+
+Durability − ensures that the result or effect of a committed transaction persists in case of a system failure.
+
+Transaction Control
+The following commands are used to control transactions.
+
+COMMIT − to save the changes.
+
+ROLLBACK − to roll back the changes.
+
+SAVEPOINT − creates points within the groups of transactions in which to ROLLBACK.
+
+SET TRANSACTION − Places a name on a transaction.
+*/
+
+USE sql_store;
+
+START TRANSACTION;
+
+INSERT INTO orders(customer_id,order_date,status)
+VALUES (1,"2021-12-15",1);
+
+INSERT INTO order_items
+VALUES (last_insert_id(),1,1,1);
+
+COMMIT;
+
+-- by default mysql wraps the sql statements inside the transaction so that if it fails then mysql could rollback them.
+-- A SQL Server deadlock is a special concurrency problem in which two transactions block the progress of each other. 
+-- The first transaction has a lock on some database object that the other transaction wants to access, and vice versa.
+
+-- Data types in MYSQL
+-- STRING,NUMERIC,DATE AND TIME,BLOB,SPATIAL TYPES
+
+-- STRING
+/*
+CHAR(X) fixed-length
+VARCHAR(X) variable length max 65535
+MEDIUMTEXT max 16MB
+LONGTEXT max 4GB
+etc..,
+
+*/
+
+-- we can use the varchar for most of the use cases.
+-- difference between the char and varchar is that char is fixed size that means if length is small then other spaces are empty
+-- varchar means if length is small then it takes space for that only.
+
+-- INTEGERS ARE THOSE VALUES WHICH DON'T CONTAIN THE DECIMALS
+/*
+TINYINT 1b [-128,127]
+UNSIGNED TINYINT 1b [0,255]
+SMALLINT
+MEDIUMINT
+INT
+BIGINT
+
+The range of these varies accroding to type of int we use 
+we need to use the specific for each use case very carefully.
+
+*/
+
+-- Fixed point and floating point numbers
+-- For fixed point we need to use the DECIMAL(p,s) p means precision (how many in total) and s means scale after decimal how many
+-- For very large numbers which can be approxmated we can use the float or double.
+
+-- For storing the boolean values we can use the BOOLEAN 
+-- TRUE MEANS 1 FALSE MEANS 0 INSTEAD OF TRUE OR FALSE WE CAN USE THE 1 OR 0 BUT IT'S BETTER TO USE THE TRUE AND FALSE.
+
+-- enum datatypes is used to restrict a column to have a list of values 
+-- in  general it is better to use the look up tables rather than enum data types.
+
+-- DATE TIME DATE TYPES
+-- DATE,TIME,DATETIME,TIMESTAMP,YEAR
+-- For any reason if we want to store the binary data then we can use the blob data types
+-- tinyblob,blob,mediumblob,longblob
+-- we should avoid the storing of binary data in database keep the binary files in the file system
+-- because this can cause may problems like db size increases,slower backups etc..,
+
+-- mysql now supports the json data type we can store the key value pairs in the db itself like we do in mongodb or firebase and we can query the data based on the key value pairs also.alter
+-- please read the tutorial for more information https://www.digitalocean.com/community/tutorials/working-with-json-in-mysql
