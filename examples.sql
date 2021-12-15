@@ -436,4 +436,118 @@ DELIMITER ;
 -- INCASE OF NULL THE DEFAULT VALUES CANN BE GIVEN BUT WE NEED TO PASS ATLEAST NULL TO INDICATE THE DEFAULT VALUES
 call sql_invoicing.get_clients_by_state(NULL);
 
+-- In order validate the parameters passed to stored procedures there is a syntax which we can follow and refer internet.
+-- output parameters read about these more on the internet
+
+-- VARIABLES
+-- In MY SQL, variables are the object which acts as a placeholder to a memory location. Variable hold single data value.
+/*
+Local variable:
+A user declares the local variable.
+By default, a local variable starts with @.
+Every local variable scope has the restriction to the current batch or procedure within any given session.
+
+DECLARE  { @LOCAL_VARIABLE[AS] data_type  [ = value ] }
+
+*/
+
+/*
+We can create the functions which are simillar to stored procedures 
+but the difference is that function returns a single value unlike result set in stored procedure.
+we have a specific syntax for creating the functions we can follow internet to write a function.
+*/
+
+
+-- Triggers
+/*
+A SQL trigger is a database object which fires when an event occurs in a database.
+ We can execute a SQL query or a stored procedure  that will "do something" in a database when a change occurs on a database table such as a record is inserted or updated or deleted.
+ For example, a trigger can be set on a record insert in a database table. 
+*/
+
+-- NEW keyword will give us the access to the new record that is inserted and we can access them values using the .
+
+/*
+Description for this trigger
+
+payments_after_insert this means this trigger will execute after a record is inserted in payments table
+this is for each row new row or existing row
+
+then between the begin and end we can write a sql query or call  a stored procedure
+*/
+
+USE sql_invoicing;
+DELIMITER $$
+DROP TRIGGER IF EXISTS payments_after_insert;
+CREATE TRIGGER payments_after_insert
+
+AFTER INSERT ON payments 
+
+FOR EACH ROW
+BEGIN
+
+UPDATE invoices
+
+SET payment_total=payment_total+ NEW.amount WHERE invoice_id=NEW.invoice_id;
+
+END$$
+
+DELIMITER ;
+
+-- lets make a payment for client id 2 in payment table and after the payment the invoice table is updated becasue of trigger.
+
+INSERT INTO payments
+VALUES(DEFAULT,5,3,"2021-12-15",1000,1);
+
+-- the naming convention for a trigger is table_name_afterorbefore_event
+-- event can be insert,update,delete
+-- in order to see the triggers 
+-- In order to filter we can use LIKE "pattern"
+SHOW TRIGGERS;
+SHOW TRIGGERS LIKE "payments%";
+
+-- In order to drop a trigger 
+
+DROP TRIGGER IF EXISTS payments_after_insert;
+-- the ideal for this trigger is before creating a new trigger
+
+-- we can also use the triggers for auditing
+-- one more thing to remember for trigger is that the sql inside the trigger for that table should not effect that table it can effect other tables.
+-- if it effects the table for which we write the tigger on then it will cause an infinite loop so be careful.
+
+-- Events 
+-- event is task or block of sql code which gets executed accoring to a schedule i.e on hourly,daily,monthly,yearly etc..,
+-- suntax for events
+/*
+CREATE
+    [DEFINER = user]
+    EVENT
+    [IF NOT EXISTS]
+    event_name
+    ON SCHEDULE schedule
+    [ON COMPLETION [NOT] PRESERVE]
+    [ENABLE | DISABLE | DISABLE ON SLAVE]
+    [COMMENT 'string']
+    DO event_body;
+
+schedule: {
+    AT timestamp [+ INTERVAL interval] ...
+  | EVERY interval
+    [STARTS timestamp [+ INTERVAL interval] ...]
+    [ENDS timestamp [+ INTERVAL interval] ...]
+}
+
+interval:
+    quantity {YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
+              WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
+              DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
+*/
+
+-- This statement creates and schedules a new event. The event does not run unless the Event Scheduler is enabled. 
+
+-- The events are very useful for cleaning the stale data which can be run on schedule basis.
+
+SHOW EVENTS
+-- IN order to drop an event DROP EVENT NAME 
+-- IN ORDER TO CHNAGE AN EVENT USE ALTER
 
